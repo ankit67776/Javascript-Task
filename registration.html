@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Registration</title>
+
+    <style>
+        body, html {
+            align-items: center;
+            justify-content: center;
+            display: flex;
+            align-content: center;
+            height: 100vh;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 300px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            margin-top: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <form id="userForm">
+        <label for="name">Name</label>
+        <input type="text" id="name" required>
+        
+        <label for="position">Position</label>
+        <input type="text" id="position" required>
+        
+        <label for="about">About</label>
+        <input type="text" name="about" id="about">
+        
+        <label for="joining">Joining Date</label>
+        <input type="date" name="joining" id="joining">
+        
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        // Adding an event listener for form submission
+        document.getElementById('userForm').addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent form from refreshing the page on submit
+
+            // Get form values
+            let name = document.getElementById('name').value;
+            let position = document.getElementById('position').value;
+            let about = document.getElementById('about').value;
+            let joining_date = document.getElementById('joining').value;
+
+            // Create an object to store the employee data
+            const userData = {
+                name: name,
+                position: position,
+                about: about,
+                joining_date: joining_date
+            };
+
+            // Retrieve existing employee list from localStorage, or initialize an empty array
+            let list = JSON.parse(localStorage.getItem('list')) || [];
+
+            // Add new employee to the list
+            list.push(userData);
+
+            // Save the updated list back to localStorage
+            localStorage.setItem("list", JSON.stringify(list));
+
+            // Reset the form fields
+            document.getElementById('userForm').reset();
+
+            // Redirect to the listing page
+            window.location.href = 'listing.html';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th{
+            background-color: #f2f2f2;
+
+        }
+
+        button{
+            background-color: black;
+            color: white;
+            padding: 5px 10px;
+            font-weight: bold;
+            border : none;
+            cursor: pointer;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Employee Listing</h1>
+        <table id="employeeTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>About</th>
+                    <th>Joining Date</th>
+                    <th>Delete/Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        window.onload =function() {
+            getEmployees();
+        }
+        function getEmployees() {
+            const list = JSON.parse(localStorage.getItem('list')) || [];
+            const table = document.querySelector('#employeeTable tbody');
+            table.innerHTML = '';
+            list.forEach((employee, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                <td>${employee.name}</td>
+                <td>${employee.position}</td>
+                <td>${employee.about}</td>
+                <td>${employee.joining_date}</td>
+                <td><button onclick = "deleteEmployee(${index})">Delete</button></td>
+                `;
+                table.appendChild(row);
+            });
+        }
+
+        function deleteEmployee(index) {
+            const list = JSON.parse(localStorage.getItem('list')) || [];
+            list.splice(index, 1);
+            localStorage.setItem('list', JSON.stringify(list));
+            getEmployees();
+        }
+
+
+    </script>
+</body>
+</html>
