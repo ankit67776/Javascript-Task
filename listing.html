@@ -5,6 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+        img {
+            width: 50px;
+        }
+        *{
+            margin: 0%;
+            padding: 0%;
+            box-sizing: border-box;
+        }
+        html, body{
+            height: 100%;
+        }
+
+       body{
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+       }
+       #header {
+            background-color: aquamarine;
+            padding: 10px;
+            text-align: center;
+        }
+         .container {
+            flex: 1; /* Ensures content grows and takes remaining space */
+            padding: 20px;
+        }
         table {
             width: 80%;
             border-collapse: collapse;
@@ -30,12 +56,58 @@
             cursor: pointer;
         }
 
+        .pagination{
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination button{
+            margin: 0 5px;
+        }
+
+        .container h1{
+            text-align: center;
+        }
+        @media screen and (max-width : 700px){
+
+.navigation{
+ 
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+}
+.navigation a {
+color: rgb(163, 87, 87);
+text-decoration: none;
+font-size: 15px;
+display: none;
+
+}
+a:hover{
+background-color: bisque;
+}
+
+.hamburger{
+display: block;
+}
+
+
+.navigation.active a {
+display: block;
+
+}
+}
+
 
     </style>
 </head>
 <body>
+    <div id="header"></div>
     <div class="container">
         <h1>Employee Listing</h1>
+        
         <table id="employeeTable">
             <thead>
                 <tr>
@@ -50,35 +122,97 @@
 
             </tbody>
         </table>
-    </div>
 
+        <div class="pagination">
+            <button id="prevBtn" onclick="prevPage()">Previous</button>
+            <button id="nextBtn" onclick="nextPage()">Next</button>
+        </div>
+    </div>
+    <div id="footer"></div>
     <script>
+        fetch('./header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('header').innerHTML= data;
+        }); 
         window.onload =function() {
-            getEmployees();
+            displayPage();
         }
         function getEmployees() {
-            const list = JSON.parse(localStorage.getItem('list')) || [];
-            const table = document.querySelector('#employeeTable tbody');
-            table.innerHTML = '';
-            list.forEach((employee, index) => {
+            return JSON.parse(localStorage.getItem('list')) || [];
+            
+        }
+
+        const rowPerPage = 5;
+        let currentPage = 1;
+        function displayPage() {
+            const employees = getEmployees();
+            const tableBody = document.querySelector('#employeeTable tbody');
+            tableBody.innerHTML = '';
+
+            const start = (currentPage - 1) * rowPerPage;
+            const end = start + rowPerPage;
+            const employeeList = employees.slice(start, end);
+
+            employeeList.forEach((employee, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                 <td>${employee.name}</td>
                 <td>${employee.position}</td>
                 <td>${employee.about}</td>
                 <td>${employee.joining_date}</td>
-                <td><button onclick = "deleteEmployee(${index})">Delete</button></td>
+                <td><button onclick = "deleteEmployee(${start + index})">Delete</button></td>
                 `;
-                table.appendChild(row);
+                tableBody.appendChild(row);
             });
+
+            totalPages(employees.length);
         }
 
         function deleteEmployee(index) {
             const list = JSON.parse(localStorage.getItem('list')) || [];
             list.splice(index, 1);
             localStorage.setItem('list', JSON.stringify(list));
-            getEmployees();
+            displayPage();
         }
+        function totalPages(totalRows) {
+            const prev = document.getElementById('prevBtn');
+            const next = document.getElementById('nextBtn');
+
+            prev.disabled = currentPage == 1;
+            next.disabled = currentPage >= Math.ceil(totalRows/rowPerPage);
+        }
+
+        function nextPage() {
+            currentPage++;
+            displayPage();
+        }
+
+        function prevPage() {
+            currentPage--;
+            displayPage();
+        }
+        fetch('./footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer').innerHTML= data;
+        }); 
+
+        document.getElementById('searchInput').addEventListener('input', function () {
+    const query = this.value.trim().toLowerCase();
+
+    const employeeList = JSON.parse(localStorage.getItem('list')) || [];
+
+    const filteredEmployees = employeeList.filter(employee => {
+        return (
+            employee.name.toLowerCase().includes(query) ||
+            employee.position.toLowerCase().includes(query) ||
+            (employee.about && employee.about.toLowerCase().includes(query))
+        );
+    });
+
+    displayPage(filteredEmployees); 
+});
 
 
     </script>
