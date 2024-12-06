@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +19,6 @@
        body{
         display: flex;
         flex-direction: column;
-
        }
 
         .header{
@@ -30,7 +28,6 @@
             padding: 10px 20px;
             justify-items: center;
             align-items: center;
-            
         }
 
         .footer{
@@ -43,12 +40,10 @@
         }
 
         .navigation {
-            
             display: flex;
             justify-content: right;
             padding-right: 10px;
             gap: 20px;
-            
         }
 
         .navigation a {
@@ -56,57 +51,52 @@
             text-decoration: none;
             font-size: 17px;
         }
+
         .hamburger {
             display: none;
             cursor: pointer;
-            
         }
 
-        
+        .search input {
+            padding: 5px 4px;
+        }
 
         @media screen and (max-width : 700px){
-
-            .navigation{
-             
+            .navigation {
               display: flex;
               flex-direction: column;
               align-items: flex-end;
-
             }
+
             .navigation a {
-            color: rgb(163, 87, 87);
-            text-decoration: none;
-            font-size: 15px;
-            display: none;
-            
-        }
-        a:hover{
-            background-color: bisque;
-        }
+                color: rgb(163, 87, 87);
+                text-decoration: none;
+                font-size: 15px;
+                display: none;
+            }
 
-        .hamburger{
-            display: block;
-        }
+            a:hover {
+                background-color: bisque;
+            }
 
-        
-        .navigation.active a {
-            display: block;
-            
+            .hamburger {
+                display: block;
+            }
+
+            .navigation.active a {
+                display: block;
+            }
         }
-        }
-        
     </style>
-
 </head>
 
 <body>
     <div>
         <div class="header">
-        <img src="./assets/logo.avif" />
-        <div class="search">
-            <input type="text" id="searchInput" placeholder="Search..." />
-            <button id="searchButton">Search</button>
-        </div>
+            <img src="./assets/logo.avif" />
+            <div class="search">
+                <input type="text" id="searchInput" placeholder="Search..." />
+            </div>
         </div>
         <div class="navigation">
             <div class="hamburger" id="hamburger">
@@ -114,20 +104,48 @@
             </div>
             <a href="registration.html">Employee Registration Page</a>
             <a href="listing.html">Employee Listing Page</a>
-
-            
         </div>
-        
     </div>
 
     <script>
         document.getElementById('hamburger').addEventListener('click', function() {
             document.querySelector('.navigation').classList.toggle('active');
-        })
-    </script>
+        });
 
-    <footer class="footer">
-        &copy; 2024 | Ankit Raikwal
-    </footer>
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value.trim().toLowerCase();
+
+            const employeeList = JSON.parse(localStorage.getItem('list')) || [];
+
+            const filteredEmployees = employeeList.filter(employee => {
+                return (
+                    employee.name.toLowerCase().includes(query) ||
+                    employee.position.toLowerCase().includes(query) ||
+                    (employee.about && employee.about.toLowerCase().includes(query))
+                );
+            });
+
+            console.log(filteredEmployees); 
+            displayEmployeeList(filteredEmployees);
+        });
+
+        
+        function displayEmployeeList(filteredEmployees) {
+            const tableBody = document.querySelector('#employeeTable tbody');
+            tableBody.innerHTML = '';
+
+            filteredEmployees.forEach(employee => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${employee.name}</td>
+                    <td>${employee.position}</td>
+                    <td>${employee.about}</td>
+                    <td>${employee.joining_date}</td>
+                    <td><button onclick="deleteEmployee(${employee.id})">Delete</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+    </script>
 </body>
 </html>
